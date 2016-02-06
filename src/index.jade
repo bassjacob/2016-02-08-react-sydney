@@ -1,0 +1,20 @@
+doctype html
+html
+  head
+    title Asynchronous Universal Component Rendering
+    meta(charset="utf-8")
+    link(rel="stylesheet" href="public/styles.css")
+
+  body
+    textarea(id="source")= slides
+
+    script(src="public/remark.js")
+    script.
+      var slideshow = remark.create({
+        ratio: "16:9",
+        navigation: {
+          scroll: false
+        },
+        highlightLanguage: 'javascript',
+        highlightStyle: 'monokai',
+      });

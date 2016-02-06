@@ -8,7 +8,9 @@ html
   body
     textarea(id="source")= slides
 
-    script(src="public/remark.js")
+    script(src="https://gnab.github.io/remark/downloads/remark-latest.min.js")
+    script.
+      window.remark || document.write('<script src="public/remark.js"><\/script>')
     script.
       var slideshow = remark.create({
         ratio: "16:9",
@@ -17,4 +19,7 @@ html
         },
         highlightLanguage: 'javascript',
         highlightStyle: 'monokai',
+        slideNumberFormat: function (current, total) {
+          return null;
+        }
       });

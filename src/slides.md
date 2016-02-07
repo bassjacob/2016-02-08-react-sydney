@@ -356,17 +356,87 @@ class: middle
 ## * Decorators!!! ❤❤❤
 ## * Need one decorator per prop required
 ## * Must define transport for each resolver
-## * Doesn't enforce an ecosystem or standard
 
 ---
 
-class: center, middle, inverse
+class: center, middle
 
-# Introducing Proactive*
+background-color: #4F22AA
+
+# .white-title[So What's Important]
+
+---
+
+class: middle, center
+
+## Simplicity
+## Ecosystem / Standards
+## Modularity / Composability
+
+---
+
+class: center, middle
+
+background-color: #AA224F
+
+# .white-title[Introducing Proactive]
 
 &nbsp;
 
 &nbsp;
 
-#### * Yet Another Microframework for React
+#### .white-title[Yet Another Microframework for React]
 
+
+---
+
+class: middle
+
+```javascript
+import React from 'react';
+import {LeafContainer} from 'proactive';
+
+@LeafContainer
+export default class List extends React.Component {
+  static shape ({subreddit}) {
+    return [
+      [
+        "postsBySubreddit", subreddit, [{from: 0, to: 9}], ["title","permalink","id"]
+      ]
+    ];
+  }
+
+  constructor(props) {
+    super(props);
+    this.state = {posts: this.props.posts || []};
+  }
+
+  render() {
+    return <div>{posts}</div>
+  }
+}
+```
+
+---
+
+class: middle
+
+## * Decorators!
+## * Falcor!
+## * Modular inside a Proactive ecosystem
+
+---
+
+class: center, middle
+
+background-color: #11BB4F
+
+# .white-title[How Does it Work?]
+
+---
+
+class: center, middle
+
+background-color: #4F224F
+
+# .white-title[Questions?]

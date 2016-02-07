@@ -23,3 +23,60 @@ html
           return null;
         }
       });
+
+      function grow(e) {
+        var oldSize = 10;
+
+        if (e.style.fontSize !== "") {
+          oldSize = parseInt(e.style.fontSize.replace('px',''));
+        }
+
+        e.style.fontSize = `${oldSize}px`;
+        var oldWidth = e.scrollWidth;
+        var oldHeight = e.scrollHeight;
+
+        e.style.fontSize = `${oldSize + 1}px`;
+        var newSize = oldSize + 1;
+        var newWidth = e.scrollWidth;
+        var newHeight = e.scrollHeight;
+
+        if ((e.scrollHeight - oldHeight) > 0 || (e.scrollWidth - oldWidth) > 0) {
+          return shrink(e)
+        } else {
+          return grow(e)
+        }
+      }
+
+      function shrink(e) {
+        var oldSize = 10;
+        var oldWidth = e.scrollWidth;
+        var oldHeight = e.scrollHeight;
+
+        if (e.style.fontSize !== "") {
+          oldSize = parseInt(e.style.fontSize.replace('px',''));
+        }
+
+        e.style.fontSize = `${oldSize - 1}px`;
+        var newSize = oldSize - 1;
+        var newWidth = e.scrollWidth;
+        var newHeight = e.scrollHeight;
+
+        if (!((e.scrollHeight - oldHeight) === 0 && (e.scrollWidth - oldWidth) === 0)) {
+          return shrink(e)
+        }
+      }
+
+      slideshow.on('afterShowSlide', (slide) => {
+        var visibleSlide = document.querySelectorAll('.remark-slide-container')[slide.getSlideIndex()];
+        var scaler = visibleSlide.querySelector('.remark-slide-scaler');
+        var codeBlock = visibleSlide.querySelector('code');
+
+        if (codeBlock) {
+          scaler.style.overflow = 'visible';
+          if (codeBlock.scrollHeight > scaler.scrollHeight || codeBlock.scrollWidth > scaler.scrollWidth) {
+            grow(codeBlock);
+          } else {
+            grow(codeBlock);
+          }
+        }
+      })

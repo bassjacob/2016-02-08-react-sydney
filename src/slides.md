@@ -109,8 +109,6 @@ background-color: #11774F
 
 ---
 
-class: middle
-
 ```javascript
 import { Component } from 'react';
 
@@ -136,8 +134,6 @@ background-color: #33AA4F
 # .white-title[[facebook/relay](https://github.com/facebook/relay)]
 
 ---
-
-class: middle
 
 ```javascript
 class Tea extends React.Component {
@@ -165,8 +161,6 @@ Tea = Relay.createContainer(Tea, {
 
 ---
 
-class: middle
-
 ```
 class TeaStore extends React.Component {
   render() {
@@ -190,8 +184,6 @@ TeaStore = Relay.createContainer(TeaStore, {
 ```
 
 ---
-
-class: middle
 
 ```
 class TeaHomeRoute extends Relay.Route {
@@ -241,9 +233,6 @@ background-color: #77BB4F
 
 ---
 
-class: middle
-
-
 ```javascript
 import AsyncProps from 'async-props'
 import React from 'react'
@@ -288,8 +277,6 @@ background-color: #22BB4F
 
 ---
 
-class: middle
-
 ```javascript
 import React  from "react";
 import Transmit from "react-transmit";
@@ -332,8 +319,6 @@ background-color: #224FCC
 # .white-title[[ericclemmons/react-resolver](https://github.com/ericclemmons/react-resolver)]
 
 ---
-
-class: middle
 
 ```javascript
 import { resolve } from "react-resolver";
@@ -390,8 +375,6 @@ background-color: #AA224F
 
 ---
 
-class: middle
-
 ```javascript
 import React from 'react';
 import {LeafContainer} from 'proactive';
@@ -432,6 +415,12 @@ class: center, middle
 background-color: #11BB4F
 
 # .white-title[How Does it Work?]
+
+---
+
+```javascript
+  () => {}
+```
 
 ---
 

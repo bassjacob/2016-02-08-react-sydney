@@ -19,21 +19,11 @@ class: right
 
 &nbsp;
 
-&nbsp;
-
-&nbsp;
-
 ## Jacob Bass
-
-&nbsp;
 
 ## bassjacob@gmail.com
 
-&nbsp;
-
 ## github.com/subshad
-
-&nbsp;
 
 ## http://jacobbass.net
 
@@ -90,9 +80,14 @@ background-color: #22334F
 ---
 
 class: center, middle
-background-color: #00334F
 
-# .white-title[Server-side Rendering]
+<img style="width:100%" src="public/flux.jpg">
+
+---
+
+class: center, middle
+
+<img style="width:100%" src="public/magic.gif">
 
 ---
 
@@ -106,7 +101,32 @@ background-color: #33114F
 class: center, middle
 background-color: #11774F
 
-# .white-title[A: Co-located Data Requirements]
+# .white-title[Co-located Data Requirements]
+
+## .white-title[&]
+
+# .white-title[Universal Rendering]
+
+---
+
+class: middle
+
+```javascript
+import { Component } from 'react';
+
+@data(({greetingId, targetId}) => {
+  //do some magic and return { greeting, target }
+});
+export default class HelloWorld extends Component {
+  render() {
+    const { greeting, target } = this.props;
+
+    return (
+      <div>{greeting} to {target}</div>
+    )
+  }
+}
+```
 
 ---
 
@@ -117,21 +137,7 @@ background-color: #33AA4F
 
 ---
 
-class: center, middle
-
-## Colocated data requirements
-
-## Aggregated requests
-
-## Occurs in render phase
-
-## Universal rendering is not supported yet.
-
-  https://github.com/denvned/isomorphic-relay
-
-  https://github.com/facebook/relay/issues/36#issuecomment-130402024
-
----
+class: middle
 
 ```javascript
 class Tea extends React.Component {
@@ -144,6 +150,7 @@ class Tea extends React.Component {
     );
   }
 }
+
 Tea = Relay.createContainer(Tea, {
   fragments: {
     tea: () => Relay.QL`
@@ -154,7 +161,13 @@ Tea = Relay.createContainer(Tea, {
     `,
   },
 });
+```
 
+---
+
+class: middle
+
+```
 class TeaStore extends React.Component {
   render() {
     return <ul>
@@ -164,6 +177,7 @@ class TeaStore extends React.Component {
     </ul>;
   }
 }
+
 TeaStore = Relay.createContainer(TeaStore, {
   fragments: {
     store: () => Relay.QL`
@@ -173,7 +187,13 @@ TeaStore = Relay.createContainer(TeaStore, {
     `,
   },
 });
+```
 
+---
+
+class: middle
+
+```
 class TeaHomeRoute extends Relay.Route {
   static routeName = 'Home';
   static queries = {
@@ -196,6 +216,24 @@ ReactDOM.render(
 
 ---
 
+class: middle
+
+## * Colocated data requirements
+
+## * Aggregated requests
+
+## * Occurs in render phase
+
+## * Universal rendering is not supported
+
+&nbsp;
+
+  https://github.com/denvned/isomorphic-relay
+
+  https://github.com/facebook/relay/issues/36#issuecomment-130402024
+
+---
+
 class: center, middle
 background-color: #77BB4F
 
@@ -203,17 +241,8 @@ background-color: #77BB4F
 
 ---
 
-## Static Method on the Component
-
-## Executes method before entering render phase, passes result into Root as props
-
-## Cannot aggregate requests
-
-## Intended for use with a Router root component
-
----
-
 class: middle
+
 
 ```javascript
 import AsyncProps from 'async-props'
@@ -221,25 +250,34 @@ import React from 'react'
 
 class App extends React.Component {
   static loadProps(params, cb) {
-  cb(null, {
-    tacos: [ 'Pollo', 'Carnitas' ]
-  })
+    cb(null, {
+      tacos: [ 'Pollo', 'Carnitas' ]
+    })
   }
 
   render() {
-  const tacos = this.props.tacos
-  return (
-    <div>
-    <ul>
-      {tacos.map(taco => (
-      <li>{taco}</li>
-      ))}
-    </ul>
-    </div>
-  )
+    const tacos = this.props.tacos
+
+    return (
+      <div>
+        <ul>
+          {tacos.map(taco => <li>{taco}</li>)}
+        </ul>
+      </div>
+    )
   }
 }
 ```
+
+---
+
+class: middle
+
+## * Static method on a root component
+
+## * Executes pre-render, blocks render
+
+## * Cannot compose specific component requirements
 
 ---
 
@@ -247,14 +285,6 @@ class: center, middle
 background-color: #22BB4F
 
 # .white-title[[RickWong/react-transmit](https://github.com/RickWong/react-transmit)]
-
----
-
-## Uses HoC's for declarative data requirement fetching
-
-## Executes inside the render phase
-
-## Monkey-Patches React.createElement to use promises and callbacks to control flow while fetching data
 
 ---
 
@@ -286,10 +316,47 @@ export default Transmit.createContainer(Story, {
 
 ---
 
+class: middle
+
+## * Uses HoC's to compose component data requests
+
+## * Executes during render phase
+
+## * Monkey-Patches React.createElement to block server render while pending
+
+---
+
 class: center, middle
 background-color: #224FCC
 
 # .white-title[[ericclemmons/react-resolver](https://github.com/ericclemmons/react-resolver)]
+
+---
+
+class: middle
+
+```javascript
+import { resolve } from "react-resolver";
+
+@resolve("user", function(props) {
+  return http.get(`/api/users/${props.params.userId}`);
+})
+class UserProfile extends React.Component {
+  render() {
+    const { user } = this.props;
+    ...
+  }
+}
+```
+
+---
+
+class: middle
+
+## * Decorators!!! ❤❤❤
+## * Need one decorator per prop required
+## * Must define transport for each resolver
+## * Doesn't enforce an ecosystem or standard
 
 ---
 

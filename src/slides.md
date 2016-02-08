@@ -419,7 +419,208 @@ background-color: #11BB4F
 ---
 
 ```javascript
-  () => {}
+export default function LeafContainer (component) {
+  return React.createClass({
+    contextTypes: {
+      //...
+    },
+
+    getInitialState() {
+      //...
+    },
+
+    componentWillReceiveProps(nextProps) {
+      //...
+    },
+
+    render() {
+      //...
+    }
+  });
+}
+```
+
+---
+
+```javascript
+export default function LeafContainer (component) {
+  return React.createClass({
+    contextTypes: {
+      // a cache used to store each result in the page request
+      cache: React.PropTypes.object,
+      // a queue used to determine the pending requests
+      queue: React.PropTypes.array,
+      // a falcor model used to make the data request
+      model: React.PropTypes.object
+    },
+
+    // ...
+  });
+}
+```
+
+---
+
+```javascript
+export default function LeafContainer (component) {
+  return React.createClass({
+    //...
+
+    getInitialState() {
+      const key = JSON.stringify(component.shape(this.props));
+      const data = this.context.cache[key];
+
+      if (data) {
+        return data;
+      } else {
+        this.context.queue.push(
+          fetchData(component.shape(this.props), this.context.cache, this.context.model))
+        )
+
+        return {pending: true, error: false};
+      }
+    },
+
+    //...
+  });
+}
+```
+
+---
+
+```javascript
+export default function LeafContainer (component) {
+  return React.createClass({
+    //...
+
+    componentWillReceiveProps(nextProps) {
+      if (JSON.stringify(this.props) !== JSON.stringify(nextProps)) {
+        this.setState({pending: true});
+
+        fetchData(
+          component.shape(nextProps),
+          this.context.cache,
+          this.context.model
+        ).then(data => {
+          this.setState(Object.assign({pending: false, error: false}, data))
+        }).catch(err => {
+          console.log(err)
+          this.setState(Object.assign({pending: false, error: true}))
+        })
+      }
+    },
+
+    //...
+  });
+}
+```
+
+
+
+---
+
+```javascript
+export default function LeafContainer (component) {
+  return React.createClass({
+    //...
+
+    render() {
+      if (this.state.pending) {
+        return <h2>Pending</h2>
+      } else if (this.state.error) {
+        return <h2>{"I'm sorry, something went wrong"}</h2>
+      } else {
+        return React.createElement(
+          component,
+          Object.assign({}, this.props, {falcorData: this.state})
+        )
+      }
+    }
+
+    //...
+  });
+}
+```
+
+
+---
+
+```javascript
+import React from 'react';
+
+export default function RootContainer(rootComponent, model, cache, queue) {
+  return React.createClass({
+    childContextTypes: {
+      model: React.PropTypes.object,
+      cache: React.PropTypes.object,
+      queue: React.PropTypes.array
+    },
+
+    getChildContext() {
+      return {
+        model,
+        cache,
+        queue
+      }
+    },
+
+    render() {
+      return React.createElement(rootComponent, this.props)
+    }
+  })
+}
+```
+
+---
+
+```javascript
+export default function serverRender(cmp, seedData, model, cache, queue, cb) {
+  ReactDOMServer.renderToStaticMarkup(
+    React.createElement(RootContainer(cmp, model, cache, queue), seedData)
+  );
+
+  if (queue.length > 0) {
+    Promise.all(queue).then(
+      () => { queue = []; serverRender(cmp, seedData, model, cache, queue, cb); }
+    ).catch(err => {
+      cb(
+        ReactDOMServer.renderToString(
+          React.createElement(RootContainer(cmp, model, cache, queue), seedData)
+        ),
+        cache
+      )
+    })
+  } else {
+    cb(
+      ReactDOMServer.renderToString(
+        React.createElement(RootContainer(cmp, model, cache, queue), seedData)
+      ),
+      cache
+    )
+  }
+}
+
+```
+
+---
+
+```javascript
+const router = express.Router();
+
+const model = new falcor.Model({
+  source: new HttpDataSource('http://localhost:3000/model.json')
+});
+
+router.get('/:subreddit', function(req, res, next) {
+  const seedingProps = { subreddit: req.params.subreddit };
+  const cache = {};
+  const queue = [];
+  const render = (posts, cache) => {
+    res.render('subreddit', { posts: posts, cache: cache } );
+  };
+
+  serverRender(List, seedingProps, model, cache, queue, render);
+});
 ```
 
 ---
